@@ -1,12 +1,11 @@
-import React, { useCallback, useMemo } from 'react';
-import { Card, Button, Space, Typography, Drawer } from 'antd';
+import React, { useCallback, useState } from 'react';
+import { Card, Button, Space, Typography } from 'antd';
 import {
   NodeIndexOutlined,
   PlusOutlined,
   PlayCircleOutlined,
   SaveOutlined,
   FolderOpenOutlined,
-  DeleteOutlined,
 } from '@ant-design/icons';
 import ReactFlow, {
   Background,
@@ -21,9 +20,9 @@ import ReactFlow, {
   ConnectionMode,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
+import type { TransformStep, Pipeline } from '@types/index';
 import { useDataStore } from '@stores/dataStore';
 import { useUIStore } from '@stores/uiStore';
-import type { TransformStep, Pipeline } from '@types/index';
 
 const { Title, Text } = Typography;
 
@@ -60,7 +59,6 @@ export const PipelineFlow: React.FC = () => {
 
   const [nodes, setNodes] = useState<Node[]>([]);
   const [edges, setEdges] = useState<Edge[]>([]);
-  const [drawerVisible, setDrawerVisible] = useState(false);
 
   const onNodesChange = useCallback(
     (changes: any) => {
@@ -122,15 +120,6 @@ export const PipelineFlow: React.FC = () => {
       description: `已添加 ${newStep.name}`,
     });
   }, [currentPipeline, nodes, addTransformStep, addNotification]);
-
-  const handleDeleteNode = useCallback((nodeId: string) => {
-    setNodes((nds) => nds.filter((n) => n.id !== nodeId));
-    setEdges((eds) => eds.filter((e) => e.source !== nodeId && e.target !== nodeId));
-    addNotification({
-      type: 'info',
-      message: '节点已删除',
-    });
-  }, []);
 
   const handleCreatePipeline = useCallback(() => {
     const newPipeline: Pipeline = {
